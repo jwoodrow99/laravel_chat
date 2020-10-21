@@ -15,9 +15,11 @@ class CreateChatsTable extends Migration
     {
         Schema::create(config('laravel-chat.table.chat'), function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->foreignId('owner_id')->constrained('users')->onDelete('cascade');
+            $table->unsignedBigInteger('owner_id');
             $table->string('name')->unique();
             $table->timestamps();
+
+            $table->foreign('owner_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

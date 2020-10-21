@@ -5,14 +5,24 @@ namespace jwoodrow99\laravel_chat\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
+use App\Models\User;
 use jwoodrow99\laravel_chat\Models\Chat;
 use jwoodrow99\laravel_chat\Models\Message;
+
 use jwoodrow99\laravel_chat\Events\NewMessage;
 
 class Laravel_ChatMessageController extends Controller
 {
-    public function index(Request $request, Chat $chat){
+    public function index(Request $request, $chat_id){
         $data = $request->all();
+
+        try {
+            $chat = Chat::findOrFail($chat_id);
+        } catch (\Exception $e){
+            return response([
+                'msg' => 'Specified chat was not found'
+            ], 404);
+        }
 
         $request->user()->Chats()->updateExistingPivot($chat->id, ['new_messages' => false]);
 
@@ -33,8 +43,16 @@ class Laravel_ChatMessageController extends Controller
         }
     }
 
-    public function create(Request $request, Chat $chat){
+    public function create(Request $request, $chat_id){
         $data = $request->all();
+
+        try {
+            $chat = Chat::findOrFail($chat_id);
+        } catch (\Exception $e){
+            return response([
+                'msg' => 'Specified chat was not found'
+            ], 404);
+        }
 
         if ($chat->users->contains($request->user())){
             $message = new Message([
@@ -65,8 +83,24 @@ class Laravel_ChatMessageController extends Controller
         }
     }
 
-    public function delete(Request $request, Chat $chat, Message $message){
+    public function delete(Request $request, $chat_id, $message_id){
         $data = $request->all();
+
+        try {
+            $chat = Chat::findOrFail($chat_id);
+        } catch (\Exception $e){
+            return response([
+                'msg' => 'Specified chat was not found'
+            ], 404);
+        }
+
+        try {
+            $message = Message::findOrFail($message_id);
+        } catch (\Exception $e){
+            return response([
+                'msg' => 'Specified message was not found'
+            ], 404);
+        }
 
         if ($message->chat->id == $chat->id){
             try {

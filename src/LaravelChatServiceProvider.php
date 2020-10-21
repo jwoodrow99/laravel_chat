@@ -24,7 +24,7 @@ class LaravelChatServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Route::middleware(config('laravel-chat.route.middleware'))->prefix(config('laravel-chat.route.prefix'))->group( function () {
+        Route::middleware([config('laravel-chat.route.middleware')])->prefix(config('laravel-chat.route.prefix'))->group( function () {
             $this->loadRoutesFrom(__DIR__ . '/../routes/laravle_chat_routes.php');
         });
 

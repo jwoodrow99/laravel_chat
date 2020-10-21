@@ -4,11 +4,12 @@ namespace jwoodrow99\laravel_chat\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+use App\Models\User;
 
 class Chat extends Model
 {
-    use HasFactory, SoftDeletes;
+    // use SoftDeletes;
 
     protected $table = "chats";
 

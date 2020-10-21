@@ -16,9 +16,11 @@ class AddUsersToChatsTable extends Migration
         Schema::create(config('laravel-chat.table.chatUser'), function (Blueprint $table) {
 
             $table->bigIncrements('id');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('chat_id')->constrained(config('laravel-chat.table.chat'))->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('chat_id');
             $table->boolean('new_messages')->default(true)->nullable(false);
+
+            $table->foreign('chat_id')->references('id')->on(config('laravel-chat.table.chat'))->onDelete('cascade');
         });
     }
 

@@ -5,25 +5,11 @@ namespace jwoodrow99\laravel_chat\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-use jwoodrow99\laravel_chat\Models\Chat;
 use App\Models\User;
+use jwoodrow99\laravel_chat\Models\Chat;
 
 class Laravel_ChatChatController extends Controller
 {
-
-    // Function used to test controller functionality
-    public function test(Request  $request){
-        $data = $request->all();
-
-        return response([
-            'message' => 'test',
-            'request' => $data,
-            'data' => [
-
-            ]
-        ]);
-    }
-
     // Get all chats that the requesting user belongs to
     public function index(Request $request){
         $data = $request->all();
@@ -43,8 +29,16 @@ class Laravel_ChatChatController extends Controller
     }
 
     // Mark chat as read by requesting user
-    public function read(Request $request, Chat $chat){
+    public function read(Request $request, $chat_id){
         $data = $request->all();
+
+        try {
+            $chat = Chat::findOrFail($chat_id);
+        } catch (\Exception $e){
+            return response([
+                'msg' => 'Specified chat was not found'
+            ], 404);
+        }
 
         if ($chat->users->contains($request->user())){
             $request->user()->Chats()->updateExistingPivot($chat->id, ['new_messages' => false]);
@@ -58,8 +52,16 @@ class Laravel_ChatChatController extends Controller
     }
 
     // Show an individual chat
-    public function show(Request $request, Chat $chat){
+    public function show(Request $request, $chat_id){
         $data = $request->all();
+
+        try {
+            $chat = Chat::findOrFail($chat_id);
+        } catch (\Exception $e){
+            return response([
+                'msg' => 'Specified chat was not found'
+            ], 404);
+        }
 
         if ($chat->users->contains($request->user())){
             return response([
@@ -91,8 +93,16 @@ class Laravel_ChatChatController extends Controller
     }
 
     // Destroy an existing chat
-    public function destroy(Request $request, Chat $chat){
+    public function destroy(Request $request, $chat_id){
         $data = $request->all();
+
+        try {
+            $chat = Chat::findOrFail($chat_id);
+        } catch (\Exception $e){
+            return response([
+                'msg' => 'Specified chat was not found'
+            ], 404);
+        }
 
         $chat->delete();
 
@@ -102,8 +112,16 @@ class Laravel_ChatChatController extends Controller
     }
 
     // List all users in chat
-    public function users(Request $request, Chat $chat){
+    public function users(Request $request, $chat_id){
         $data = $request->all();
+
+        try {
+            $chat = Chat::findOrFail($chat_id);
+        } catch (\Exception $e){
+            return response([
+                'msg' => 'Specified chat was not found'
+            ], 404);
+        }
 
         if ($chat->users->contains($request->user())) {
             return response([
@@ -117,8 +135,16 @@ class Laravel_ChatChatController extends Controller
     }
 
     // Add users to chat
-    public function addUsers(Request $request, Chat $chat){
+    public function addUsers(Request $request, $chat_id){
         $data = $request->all();
+
+        try {
+            $chat = Chat::findOrFail($chat_id);
+        } catch (\Exception $e){
+            return response([
+                'msg' => 'Specified chat was not found'
+            ], 404);
+        }
 
         $validUsers = [];
         $invalidUsers = [];
@@ -142,8 +168,16 @@ class Laravel_ChatChatController extends Controller
     }
 
     // Remove a single user from chat
-    public function removeUser(Request $request, Chat $chat, User $user){
+    public function removeUser(Request $request, $chat_id, User $user){
         $data = $request->all();
+
+        try {
+            $chat = Chat::findOrFail($chat_id);
+        } catch (\Exception $e){
+            return response([
+                'msg' => 'Specified chat was not found'
+            ], 404);
+        }
 
         if ($user->id != $chat->user_id){
             $chat->users()->detach($user);
@@ -162,8 +196,16 @@ class Laravel_ChatChatController extends Controller
     // Sync all users in request array
     //  - Remove users in chat, who are not in request array
     //  - Add users who are in request array but not in chat
-    public function syncUsers(Request $request, Chat $chat){
+    public function syncUsers(Request $request, $chat_id){
         $data = $request->all();
+
+        try {
+            $chat = Chat::findOrFail($chat_id);
+        } catch (\Exception $e){
+            return response([
+                'msg' => 'Specified chat was not found'
+            ], 404);
+        }
 
         if (!in_array($chat->owner_id, $data['users'])){
             try {

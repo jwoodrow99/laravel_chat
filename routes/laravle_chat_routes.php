@@ -4,8 +4,6 @@ use Illuminate\Support\Facades\Route;
 use jwoodrow99\laravel_chat\Http\Controllers\Laravel_ChatChatController as ChatController;
 use jwoodrow99\laravel_chat\Http\Controllers\Laravel_ChatMessageController as MessageController;
 
-Route::get('/test', [ChatController::class, 'test']); // Get all chats you have access to
-
 // Chat Routes
 Route::get('/', [ChatController::class, 'index']); // Get all chats you have access to
 Route::get('/{chat}', [ChatController::class, 'show']); // Get specific chat you have access to

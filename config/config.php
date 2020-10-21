@@ -11,5 +11,6 @@ return [
         'middleware' => env('LARAVEL_CHAT_ROUTE_MIDDLEWARE', 'auth:web'),
         'privileged_middleware' => env('LARAVEL_CHAT_ROUTE_PRIVILEGED_MIDDLEWARE', 'auth:web')
     ],
-    'migration_dir' => env('LARAVEL_CHAT_MIGRATION_DIR', 'migrations')
+    'migration_dir' => env('LARAVEL_CHAT_MIGRATION_DIR', 'migrations'),
+    'channel-name' => env('LARAVEL_CHAT_CHANNEL_NAME', null),
 ];
