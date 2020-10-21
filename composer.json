@@ -1,0 +1,12 @@
+{
+    "name": "jwoodrow99/laravel_chat",
+    "description": "Scaffold chat API for laravel",
+    "authors": [
+        {
+            "name": "Jack Woodrow",
+            "email": "jackwoodrow@protonmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
