@@ -152,9 +152,9 @@ class Laravel_ChatChatController extends Controller
         foreach ($data['users'] as $user){
             try {
                 $user = User::findOrFail($user);
-                array_push($validUsers, $user);
+                array_push($validUsers, $user->id);
             } catch (\Exception $e) {
-                array_push($invalidUsers, $user);
+                array_push($invalidUsers, $user->id);
             }
         }
 
@@ -168,7 +168,7 @@ class Laravel_ChatChatController extends Controller
     }
 
     // Remove a single user from chat
-    public function removeUser(Request $request, $chat_id, User $user){
+    public function removeUser(Request $request, $chat_id, $user_id){
         $data = $request->all();
 
         try {
@@ -179,8 +179,16 @@ class Laravel_ChatChatController extends Controller
             ], 404);
         }
 
-        if ($user->id != $chat->user_id){
-            $chat->users()->detach($user);
+        try {
+            $user = User::findOrFail($user_id);
+        } catch (\Exception $e){
+            return response([
+                'msg' => 'Specified user was not found'
+            ], 404);
+        }
+
+        if ($user->id != $chat->owner_id){
+            $chat->users()->detach($user->id);
         } else {
             return response([
                 'message' => 'You cannot remove chat owner from chat.'
@@ -199,6 +207,8 @@ class Laravel_ChatChatController extends Controller
     public function syncUsers(Request $request, $chat_id){
         $data = $request->all();
 
+        $users = $data['users'];
+
         try {
             $chat = Chat::findOrFail($chat_id);
         } catch (\Exception $e){
@@ -207,18 +217,16 @@ class Laravel_ChatChatController extends Controller
             ], 404);
         }
 
-        if (!in_array($chat->owner_id, $data['users'])){
-            try {
-                $chat->users()->sync($data['users']);
-            } catch (\Exception $e) {
-                return response([
-                    'message' => 'Unable to sync users to chat.'
-                ], 500);
-            }
-        } else {
+        if (!in_array($chat->owner_id, $users)){
+            array_push($users, (string) $chat->owner_id);
+        }
+
+        try {
+            $chat->users()->sync($users);
+        } catch (\Exception $e) {
             return response([
-                'message' => 'You cannot include chat owner in sync.'
-            ], 403);
+                'message' => 'Unable to sync users to chat.'
+            ], 500);
         }
 
         return response([

@@ -9,13 +9,16 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+
 use jwoodrow99\laravel_chat\Models\Message;
 
-class NewMessage
+class NewMessageEvent
 {
     use Dispatchable, SerializesModels;
 
     public $message;
+    public $chat_id;
+    public $user_id;
 
     /**
      * Create a new event instance.
@@ -24,7 +27,9 @@ class NewMessage
      */
     public function __construct(Message $message)
     {
-        $this->message = $message;
+        $this->message = $message->message;
+        $this->chat_id = $message->chat_id;
+        $this->user_id = $message->user_id;
     }
 
     /**
@@ -32,8 +37,8 @@ class NewMessage
      *
      * @return \Illuminate\Broadcasting\Channel|array
      */
-    public function broadcastOn()
-    {
-        return new PrivateChannel('channel-name');
-    }
+//    public function broadcastOn()
+//    {
+//        return new PrivateChannel('channel-name');
+//    }
 }

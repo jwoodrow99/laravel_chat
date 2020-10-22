@@ -6,10 +6,11 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 use jwoodrow99\laravel_chat\Models\Chat;
 use jwoodrow99\laravel_chat\Models\Message;
 
-use jwoodrow99\laravel_chat\Events\NewMessage;
+use jwoodrow99\laravel_chat\Events\NewMessageEvent;
 
 class Laravel_ChatMessageController extends Controller
 {
@@ -29,11 +30,11 @@ class Laravel_ChatMessageController extends Controller
         if ($chat->users->contains($request->user())){
             if ($request->query('per_page')){
                 return response([
-                    'messages' => $chat->messages()->orderBy('id', 'desc')->paginate($request->query('per_page'))
+                    'messages' => $chat->messages()->with('user')->orderBy('id', 'desc')->paginate($request->query('per_page'))
                 ]);
             } else {
                 return response([
-                    'messages' => $chat->messages()->orderBy('id', 'desc')->get()
+                    'messages' => $chat->messages()->with('user')->orderBy('id', 'desc')->get()
                 ]);
             }
         } else {
@@ -70,7 +71,7 @@ class Laravel_ChatMessageController extends Controller
             }
 
             // Broadcast new message event
-            event(new NewMessage($message));
+            NewMessageEvent::dispatch($message);
             $chat->users()->where('id', '!=', $request->user()->id)->updateExistingPivot($chat->id, ['new_messages' => true]);
 
             return response([

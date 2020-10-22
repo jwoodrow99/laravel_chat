@@ -30,6 +30,6 @@ class User extends Authenticatable
 }
 ```
 
-When a new message is created, an internal laravel event is broadcast called 'NewMessage'
+When a new message is created, an internal laravel event is broadcast called 'NewMessageEvent'
 If you are using a socket server to notify users of messages, it is suggested to make a listener
 for the event and then broadcast on the socket from the listener.
