@@ -17,8 +17,6 @@ class NewMessageEvent
     use Dispatchable, SerializesModels;
 
     public $message;
-    public $chat_id;
-    public $user_id;
 
     /**
      * Create a new event instance.
@@ -27,18 +25,6 @@ class NewMessageEvent
      */
     public function __construct(Message $message)
     {
-        $this->message = $message->message;
-        $this->chat_id = $message->chat_id;
-        $this->user_id = $message->user_id;
+        $this->message = $message;
     }
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
-//    public function broadcastOn()
-//    {
-//        return new PrivateChannel('channel-name');
-//    }
 }

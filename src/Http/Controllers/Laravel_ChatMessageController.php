@@ -72,6 +72,8 @@ class Laravel_ChatMessageController extends Controller
 
             // Broadcast new message event
             NewMessageEvent::dispatch($message);
+
+            // Update pivot of all users except sender
             $chat->users()->where('id', '!=', $request->user()->id)->updateExistingPivot($chat->id, ['new_messages' => true]);
 
             return response([
